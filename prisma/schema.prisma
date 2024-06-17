@@ -11,28 +11,14 @@ datasource db {
 }
 
 model Project {
-  id     String @id @default(cuid())
-  name   String
-  path   String
-  origin String
+  id            String @id @default(cuid())
+  repoName      String
+  path          String
+  origin        String
+  defaultBranch String
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  ProjectFile ProjectFile[]
-
-  @@index([name, path, origin])
-}
-
-model ProjectFile {
-  id        String   @id @default(cuid())
-  name      String
-  path      String
-  extension String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project   Project @relation(fields: [projectId], references: [id])
-  projectId String
-
-  @@index([name, path, projectId])
+  @@index([repoName, path, origin])
 }
