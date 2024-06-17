@@ -1,16 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { existsExtension } from './extensions/exists.extension';
-import cuid2Extension from 'prisma-extension-cuid2';
 
 function extendClient(base: PrismaClient) {
   // Add as many as you'd like - no ugly types required!
-  return base.$extends(existsExtension).$extends(
-    cuid2Extension({
-      fields: [
-        'Project:id',
-      ],
-    })
-  );
+  return base.$extends(existsExtension)
 }
 
 class UntypedExtendedClient extends PrismaClient {

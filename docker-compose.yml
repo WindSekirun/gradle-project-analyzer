@@ -10,6 +10,7 @@ services:
       - 3000:3000
     environment:
       - DATABASE_URL=file:/data/gradle-project-analyzer.db
+      - AUTH_TOKEN=samplesample
     volumes:
       - gpa-data:/data
   
