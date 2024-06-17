@@ -20,11 +20,11 @@ function getLatestTag() {
 function createAndPushTag(version) {
   const tag = `${version}`;
   if (shell.exec(`git tag ${tag}`).code !== 0) {
-    shell.echo('Error: Git tagging failed');
+    console.log('Error: Git tagging failed');
     shell.exit(1);
   }
   if (shell.exec(`git push origin ${tag}`).code !== 0) {
-    shell.echo('Error: Git push tag failed');
+    console.log('Error: Git push tag failed');
     shell.exit(1);
   }
 }
@@ -34,10 +34,10 @@ const currentVersion = getCurrentVersion();
 const latestTag = getLatestTag();
 const latestTagVersion = latestTag ? latestTag.replace(/^v/, '') : null;
 
-shell.echo(`current: ${currentVersion} latest: ${latestTagVersion}`);
+console.log(`current: ${currentVersion} latest: ${latestTagVersion}`);
 if (currentVersion !== latestTagVersion) {
   createAndPushTag(currentVersion);
-  shell.echo(`Successfully created and pushed tag v${currentVersion}`);
+  console.log(`Successfully created and pushed tag v${currentVersion}`);
 } else {
-  shell.echo(`Version has not changed. No tag created.`);
+  console.log(`Version has not changed. No tag created.`);
 }
