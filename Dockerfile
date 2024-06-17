@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y \
     dumb-init \
     python3 \
     python3-pip \
+    git \
+    curl \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm i -g pnpm
@@ -41,6 +44,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN pip3 install --break-system-packages setuptools && \
     pip3 install --break-system-packages -r /app/python-requirements.txt
 
-ENV DATABASE_URL="file:/data/gradle-project-analyzer.db"
+ENV DATABASE_URL="file:/app/data/gradle-project-analyzer.db"
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

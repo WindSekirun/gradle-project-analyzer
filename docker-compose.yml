@@ -1,6 +1,6 @@
 version: '3'
 services:
-  app:
+  gradle-project-analyzer:
     image: ghcr.io/windsekirun/gradle-project-analyzer
     container_name: gradle-project-analyzer 
     build:
@@ -9,10 +9,11 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DATABASE_URL=file:/data/gradle-project-analyzer.db
-      - AUTH_TOKEN=samplesample
+      - DATABASE_URL=file:/app/data/gradle-project-analyzer.db
+      - AUTH_TOKEN=sample
     volumes:
-      - gpa-data:/data
+      - gpa-data:/app/data
+    restart: unless-stopped
   
 volumes:
   gpa-data:
