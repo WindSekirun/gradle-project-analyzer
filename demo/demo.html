@@ -59,9 +59,6 @@
           const socketConnected = ref(false);
           const instance = axios.create({
             baseURL: 'http://localhost:3000',
-            headers: {
-              Authorization: 'Bearer ' + authorizationHeader.value,
-            },
           });
           const socket = io('http://localhost:3000', {
             path: '/api/command/output',
@@ -121,15 +118,25 @@
             try {
               let response;
               if (functionData.method === 'GET') {
-                response = await instance.get(functionData.apiPath);
+                response = await instance.get(functionData.apiPath, {
+                  headers: {
+                    Authorization: `Bearer ${authorizationHeader.value}`,
+                  },
+                });
               } else {
-                response = await instance.post(functionData.apiPath, requestData);
+                response = await instance.post(functionData.apiPath, requestData, {
+                  headers: {
+                    Authorization: `Bearer ${authorizationHeader.value}`,
+                  },
+                });
               }
               output.value = JSON.stringify(response.data, null, 2);
             } catch (error) {
               console.log(error);
               if (error.response) {
                 output.value = JSON.stringify(error.response.data, null, 2);
+              } else {
+                output.value = error;
               }
             }
             updateOutput();
@@ -169,8 +176,7 @@
           });
 
           watch(authorizationHeader, (newVal) => {
-            socket.io.opts.extraHeaders.Authorization = 'Bearer ' + newVal;
-            instance.defaults.headers.common['Authorization'] = 'Bearer ' + newVal;
+            socket.io.opts.extraHeaders.Authorization = `Bearer ${newVal}`;
           });
 
           return {

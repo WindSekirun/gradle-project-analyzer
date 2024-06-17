@@ -17,7 +17,7 @@ fi
 echo "DATABASE_URL is set to $DATABASE_URL"
 
 echo "Running Prisma migrations..."
-npx prisma migrate dev
+npx prisma migrate deploy
 
 echo "Starting the application with dumb-init..."
 exec dumb-init node dist/main.js
