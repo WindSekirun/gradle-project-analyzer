@@ -11,14 +11,13 @@ datasource db {
 }
 
 model Project {
-  id            Int @id @default(autoincrement())
-  repoName      String
-  path          String
+  id            Int    @id @default(autoincrement())
+  repoName      String @unique
   origin        String
   defaultBranch String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([repoName, path, origin])
+  @@index([repoName, origin])
 }

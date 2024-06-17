@@ -54,6 +54,8 @@
 
       const App = {
         setup() {
+          const defaultRepoName = 'nowinandroid';
+          const defaultRepoUrl = 'https://github.com/android/nowinandroid';
           const authorizationHeader = ref('sample');
           const output = ref('');
           const socketConnected = ref(false);
@@ -66,7 +68,6 @@
               Authorization: 'Bearer ' + authorizationHeader.value,
             },
             reconnectionDelayMax: 10000,
-            autoConnect: false,
             reconnection: false,
           });
 
@@ -86,6 +87,16 @@
               paramValues: {
                 id: '',
                 command: '',
+              },
+            },
+            {
+              name: 'Clone',
+              apiPath: '/api/git/clone',
+              method: 'POST',
+              params: ['repoName', 'repoUrl'],
+              paramValues: {
+                repoName: defaultRepoName,
+                repoUrl: defaultRepoUrl,
               },
             },
           ]);

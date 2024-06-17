@@ -25,7 +25,7 @@ export class CommandService {
 
       cmd.on('close', (code) => {
         if (code === 0) {
-          resolve(output);
+          resolve(output.slice(0, output.length - 1));
         } else {
           reject(`Command failed with code ${code}`);
         }

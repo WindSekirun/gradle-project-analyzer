@@ -8,5 +8,6 @@ import { CommandController } from './command.controller';
   imports: [AuthModule],
   providers: [CommandService, LogsGateway],
   controllers: [CommandController],
+  exports: [CommandService],
 })
 export class CommandModule {}
