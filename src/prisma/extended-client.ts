@@ -8,7 +8,6 @@ function extendClient(base: PrismaClient) {
     cuid2Extension({
       fields: [
         'Project:id',
-        'ProjectFile:id',
       ],
     })
   );
