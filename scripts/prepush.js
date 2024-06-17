@@ -2,7 +2,6 @@ const shell = require('shelljs');
 const fs = require('fs');
 const path = require('path');
 
-const LAST_VERSION_FILE = path.join(__dirname, '../last_version.txt');
 const PACKAGE_JSON_PATH = path.join(__dirname, '../package.json');
 
 function getCurrentVersion() {
@@ -10,35 +9,35 @@ function getCurrentVersion() {
   return packageJson.version;
 }
 
-function getLastVersion() {
-  if (!fs.existsSync(LAST_VERSION_FILE)) {
-    return '0.0.0';
+function getLatestTag() {
+  const result = shell.exec('git describe --tags --abbrev=0', { silent: true });
+  if (result.code !== 0) {
+    return null;
   }
-  return fs.readFileSync(LAST_VERSION_FILE, 'utf8').trim();
-}
-
-function updateLastVersion(version) {
-  fs.writeFileSync(LAST_VERSION_FILE, version, 'utf8');
+  return result.stdout.trim();
 }
 
 function createAndPushTag(version) {
-  if (shell.exec(`git tag ${version}`).code !== 0) {
+  const tag = `${version}`;
+  if (shell.exec(`git tag ${tag}`).code !== 0) {
     shell.echo('Error: Git tagging failed');
     shell.exit(1);
   }
-  if (shell.exec(`git push origin ${version}`).code !== 0) {
+  if (shell.exec(`git push origin ${tag}`).code !== 0) {
     shell.echo('Error: Git push tag failed');
     shell.exit(1);
   }
 }
 
+// Main script execution
 const currentVersion = getCurrentVersion();
-const lastVersion = getLastVersion();
+const latestTag = getLatestTag();
+const latestTagVersion = latestTag ? latestTag.replace(/^v/, '') : null;
 
-if (currentVersion !== lastVersion) {
+shell.echo(`current: ${currentVersion} latest: ${latestTagVersion}`);
+if (currentVersion !== latestTagVersion) {
   createAndPushTag(currentVersion);
-  updateLastVersion(currentVersion);
-  shell.echo(`Successfully created and pushed tag ${currentVersion}`);
+  shell.echo(`Successfully created and pushed tag v${currentVersion}`);
 } else {
   shell.echo(`Version has not changed. No tag created.`);
 }
