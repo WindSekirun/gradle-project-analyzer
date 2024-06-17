@@ -5,11 +5,11 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UnauthorizedException } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 
 @WebSocketGateway({
-  path: '/command/output',
+  path: '/api/command/output',
   cors: { origin: '*', methods: ['GET', 'POST'] },
 })
 export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -23,11 +23,11 @@ export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
       throw new UnauthorizedException('Invalid token');
     }
-    console.log('Client connected:', client.id);
+    Logger.log(`Client connected: ${client.id}`, 'LogGateway');
   }
 
   handleDisconnect(client: Socket) {
-    console.log('Client disconnected:', client.id);
+    Logger.log(`Client disconnected: ${client.id}`, 'LogGateway');
   }
 
   sendLogMessage(id: string, message: string) {

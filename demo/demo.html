@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gradle-project-analyzer demo page</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body>
+    <div id="app" class="container">
+      <div class="left">
+        <div class="row">
+          <div class="input-group">
+            <label>Authorization Header</label>
+            <input v-model="authorizationHeader" type="text" />
+          </div>
+        </div>
+        <div class="row">
+          <button @click="connectWebSocket" style="margin-right: 10px">Connect</button>
+          <button @click="disconnectWebSocket">Disconnect</button>
+          <span class="status-indicator">{{ connectionStatus }}</span>
+        </div>
+        <div class="function-group" v-for="(functionData, index) in functionsList" :key="index">
+          <div class="input-group">
+            <label>{{ functionData.name }}</label>
+          </div>
+          <div v-for="(param, pIndex) in functionData.params" :key="pIndex" class="input-group">
+            <label>{{ param }}</label>
+            <input v-model="functionData.paramValues[param]" type="text" />
+          </div>
+          <button @click="executeFunction(functionData)">Execute</button>
+        </div>
+        <div class="row">
+          <pre><code ref="output" class="hljs">{{ output.value }}</code></pre>
+        </div>
+      </div>
+      <div class="right"></div>
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        reactive,
+        computed,
+        onMounted,
+        watch,
+      } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      const App = {
+        setup() {
+          const authorizationHeader = ref('sample');
+          const output = ref('');
+          const socketConnected = ref(false);
+          const instance = axios.create({
+            baseURL: 'http://localhost:3000',
+            headers: {
+              Authorization: 'Bearer ' + authorizationHeader.value,
+            },
+          });
+          const socket = io('http://localhost:3000', {
+            path: '/api/command/output',
+            extraHeaders: {
+              Authorization: 'Bearer ' + authorizationHeader.value,
+            },
+            reconnectionDelayMax: 10000,
+            autoConnect: false,
+            reconnection: false,
+          });
+
+          const functionsList = reactive([
+            {
+              name: 'Project List',
+              apiPath: '/api/project',
+              method: 'GET',
+              params: [],
+              paramValues: {},
+            },
+            {
+              name: 'Command',
+              apiPath: '/api/command/execute',
+              method: 'POST',
+              params: ['id', 'command'],
+              paramValues: {
+                id: '',
+                command: '',
+              },
+            },
+          ]);
+
+          const connectionStatus = computed(() => (socketConnected.value ? '🟢' : '🔴'));
+
+          const connectWebSocket = () => {
+            socket.connect();
+          };
+
+          const disconnectWebSocket = () => {
+            socket.disconnect();
+          };
+
+          const uuid = () => {
+            var t = URL.createObjectURL(new Blob()),
+              e = t.toString();
+            return URL.revokeObjectURL(t), e.split(/[:\/]/g).pop().toLowerCase();
+          };
+
+          const executeFunction = async (functionData) => {
+            const requestData = {};
+            functionData.params.forEach((param) => {
+              requestData[param] = functionData.paramValues[param];
+              if (param == 'id' && !requestData['id']) {
+                requestData['id'] = uuid();
+              }
+            });
+
+            try {
+              let response;
+              if (functionData.method === 'GET') {
+                response = await instance.get(functionData.apiPath);
+              } else {
+                response = await instance.post(functionData.apiPath, requestData);
+              }
+              output.value = JSON.stringify(response.data, null, 2);
+            } catch (error) {
+              console.log(error);
+              if (error.response) {
+                output.value = JSON.stringify(error.response.data, null, 2);
+              }
+            }
+            updateOutput();
+          };
+
+          const updateOutput = () => {
+            const outputElement = document.querySelector('code.hljs');
+            outputElement.innerText = output.value;
+            hljs.highlightElement(outputElement);
+          };
+
+          onMounted(() => {
+            socket.on('connect', () => {
+              socketConnected.value = true;
+            });
+
+            socket.on('disconnect', () => {
+              socketConnected.value = false;
+            });
+
+            socket.on('log', (data) => {
+              const { id, message } = data;
+              let logElement = document.getElementById(id);
+
+              if (logElement) {
+                logElement.innerText += '\n' + message;
+              } else {
+                logElement = document.createElement('div');
+                logElement.id = id;
+                logElement.innerText = message;
+                logElement.className = 'log-message';
+                document.querySelector('.right').appendChild(logElement);
+              }
+
+              logElement.scrollIntoView({ behavior: 'smooth' });
+            });
+          });
+
+          watch(authorizationHeader, (newVal) => {
+            socket.io.opts.extraHeaders.Authorization = 'Bearer ' + newVal;
+            instance.defaults.headers.common['Authorization'] = 'Bearer ' + newVal;
+          });
+
+          return {
+            authorizationHeader,
+            output,
+            socketConnected,
+            functionsList,
+            connectionStatus,
+            connectWebSocket,
+            disconnectWebSocket,
+            executeFunction,
+            updateOutput,
+          };
+        },
+      };
+
+      createApp(App).mount('#app');
+    </script>
+  </body>
+</html>
