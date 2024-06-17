@@ -2,7 +2,7 @@
 
 **Currently developing**
 
-Providing analysis functions of Gradle-based projects
+REST APIs that providing analysis functions of Gradle-based projects
 
 * Clone/Checkout Projects
 * Get file history from Kotlin / Java ClassName

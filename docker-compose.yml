@@ -1,0 +1,17 @@
+version: '3'
+services:
+  app:
+    image: ghcr.io/windsekirun/gradle-project-analyzer
+    container_name: gradle-project-analyzer 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=file:/data/gradle-project-analyzer.db
+    volumes:
+      - gpa-data:/data
+  
+volumes:
+  gpa-data:
