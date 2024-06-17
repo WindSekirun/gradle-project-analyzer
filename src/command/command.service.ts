@@ -11,6 +11,8 @@ export class CommandService {
       const cmd = exec(command);
       let output = '';
 
+      this.logsGateway.sendLogMessage(logId, `> ${command}`);
+
       cmd.stdout.on('data', (data) => {
         const message = data.toString();
         output += message;

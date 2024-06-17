@@ -100,8 +100,55 @@
               },
             },
             {
+              name: 'Pull',
+              apiPath: '/api/git/pull',
+              method: 'POST',
+              params: ['repoName'],
+              paramValues: {
+                repoName: defaultRepoName,
+              },
+            },
+            {
+              name: 'Fetch',
+              apiPath: '/api/git/fetch',
+              method: 'POST',
+              params: ['repoName'],
+              paramValues: {
+                repoName: defaultRepoName,
+              },
+            },
+            {
+              name: 'Checkout',
+              apiPath: '/api/git/checkout',
+              method: 'POST',
+              params: ['repoName', 'newBranch', 'ref'],
+              paramValues: {
+                repoName: defaultRepoName,
+                newBranch: '',
+                ref: ''
+              },
+            },
+            {
               name: 'Delete',
               apiPath: '/api/git/delete',
+              method: 'POST',
+              params: ['repoName'],
+              paramValues: {
+                repoName: defaultRepoName,
+              },
+            },
+            {
+              name: 'Status',
+              apiPath: '/api/git/status',
+              method: 'POST',
+              params: ['repoName'],
+              paramValues: {
+                repoName: defaultRepoName,
+              },
+            },
+            {
+              name: 'Current Branch',
+              apiPath: '/api/git/branch/get',
               method: 'POST',
               params: ['repoName'],
               paramValues: {

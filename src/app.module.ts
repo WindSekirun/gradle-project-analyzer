@@ -15,7 +15,7 @@ import { join } from 'path';
     PrismaModule.forRoot(),
     GitModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'repos'),
+      rootPath: join(__dirname, '..', '..', 'data/', 'repos'),
       serveRoot: '/repos',
     }),
   ],
