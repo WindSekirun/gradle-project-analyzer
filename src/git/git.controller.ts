@@ -16,4 +16,14 @@ export class GitController {
       return { result: false, error };
     }
   }
+
+  @Post('delete')
+  async deleteRepository(@Body('repoName') repoName: string) {
+    try {
+      const response = await this.gitService.deleteRepository(repoName);
+      return { result: true, response };
+    } catch (error) {
+      return { result: false, error };
+    }
+  }
 }

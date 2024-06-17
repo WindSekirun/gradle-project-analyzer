@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { CommandService } from '../command/command.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,11 +10,19 @@ export class GitService {
     private prismaService: PrismaService,
   ) {}
 
+  async deleteRepository(repoName: string) {
+    const localPath = join(__dirname, '..', 'repos', repoName);
+    await this.commandService.runCommand('delete', `rm -rf ${localPath}`);
+    return await this.prismaService.project.delete({
+      where: {
+        repoName,
+      },
+    });
+  }
+
   async cloneRepository(repoName: string, repoUrl: string): Promise<string> {
     const localPath = join(__dirname, '..', 'repos', repoName);
-    const clone = `git clone ${repoUrl} ${localPath}`;
-    await this.commandService.runCommand('clone', clone);
-
+    await this.commandService.runCommand('clone', `git clone ${repoUrl} ${localPath}`);
     const currentBranch = await this.commandService.runCommand(
       'branch',
       `git -C ${localPath} rev-parse --abbrev-ref HEAD`,

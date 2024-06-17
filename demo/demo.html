@@ -99,6 +99,15 @@
                 repoUrl: defaultRepoUrl,
               },
             },
+            {
+              name: 'Delete',
+              apiPath: '/api/git/delete',
+              method: 'POST',
+              params: ['repoName'],
+              paramValues: {
+                repoName: defaultRepoName,
+              },
+            },
           ]);
 
           const connectionStatus = computed(() => (socketConnected.value ? '🟢' : '🔴'));
