@@ -56,3 +56,28 @@ pre {
   font-size: 1em;
   margin-left: 10px;
 }
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+a {
+  text-decoration: none;
+  color: blue;
+  margin-left: 5px;
+}
+a:hover {
+  text-decoration: underline;
+}
+.file-content {
+  white-space: pre-wrap;
+  margin-top: 20px;
+}
+.icon {
+  font-family: 'Material Icons';
+  font-size: 16px;
+}

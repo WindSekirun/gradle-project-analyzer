@@ -18,6 +18,7 @@ FROM base AS dependencies
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY ./prisma/ ./
+COPY ./browser/ ./
 RUN pnpm install
 
 FROM base AS build
@@ -35,6 +36,7 @@ WORKDIR /app
 COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/browser ./browser
 
 COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY python-requirements.txt /app/python-requirements.txt

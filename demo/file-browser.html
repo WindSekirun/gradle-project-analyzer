@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gradle-project-analyzer demo page</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="demo.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons" />
+  </head>
+  <body>
+    <div id="app" class="container">
+      <div class="left">
+        <div class="row">
+          <div class="input-group">
+            <label>Authorization Header</label>
+            <input v-model="authorizationHeader" type="text" />
+          </div>
+        </div>
+        <ul>
+          <li v-if="currentPath" @click="navigateUp">
+            <span class="icon">folder</span>
+            <a href="#">..</a>
+          </li>
+          <li v-for="file in files" :key="file.name">
+            <span class="icon">{{ file.isDirectory ? 'folder' : 'insert_drive_file' }}</span>
+            <a href="#" @click.prevent="navigate(file)">{{ file.name }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="right">
+        <span style="white-space: pre">{{ fileContent }}</span>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createApp, ref, onMounted, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      const App = {
+        setup() {
+          const authorizationHeader = ref('sample');
+          const files = ref([]);
+          const fileContent = ref('');
+          const currentFile = ref('');
+          const currentPath = ref('');
+          const instance = axios.create({
+            baseURL: 'http://localhost:3000',
+          });
+
+          const fetchFiles = async (path) => {
+            fileContent.value = '';
+            currentFile.value = '';
+            currentPath.value = path;
+
+            const response = await instance.get(`/api/files?path=${path}`, {
+              headers: {
+                Authorization: `Bearer ${authorizationHeader.value}`,
+              },
+            });
+            files.value = response.data;
+          };
+
+          const navigate = async (file) => {
+            if (file.isDirectory) {
+              fetchFiles(file.path);
+            } else {
+              const response = await instance.get(`/api/files/content?path=${file.path}`, {
+                headers: {
+                  Authorization: `Bearer ${authorizationHeader.value}`,
+                },
+              });
+              fileContent.value = response.data;
+              currentFile.value = file.name;
+            }
+          };
+
+          const navigateUp = () => {
+            const pathSegments = currentPath.value.split('/').filter((segment) => segment);
+            pathSegments.pop();
+            fetchFiles(pathSegments.join('/'));
+          };
+
+          onMounted(() => {
+            fetchFiles('');
+          });
+
+          return {
+            authorizationHeader,
+            files,
+            fileContent,
+            currentFile,
+            currentPath,
+            fetchFiles,
+            navigate,
+            navigateUp,
+          };
+        },
+      };
+
+      createApp(App).mount('#app');
+    </script>
+  </body>
+</html>
