@@ -12,6 +12,7 @@ class Report:
     blank: int
     comments: int
     code: int
+    lines: int
 
 @dataclass
 class ModuleReport:
@@ -48,7 +49,8 @@ def process_cloc_report(cloc_report: dict) -> List[Report]:
                 files=data["nFiles"],
                 blank=data["blank"],
                 comments=data["comment"],
-                code=data["code"]
+                code=data["code"],
+                lines=data["blank"]+data["comment"]+data["code"]
             ))
     return reports
 
