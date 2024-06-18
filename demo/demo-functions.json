@@ -158,11 +158,22 @@
     }
   },
   {
+    "name": "New Tag",
+    "apiPath": "/api/git/tag/new",
+    "method": "POST",
+    "params": [
+      "repoName",
+      "tagName"
+    ],
+    "paramValues": {
+      "repoName": "nowinandroid",
+      "tagName": ""
+    }
+  },
+  {
     "name": "Project List",
     "apiPath": "/api/project",
-    "method": "GET",
-    "params": [],
-    "paramValues": {}
+    "method": "GET"
   },
   {
     "name": "Pull",
@@ -187,23 +198,19 @@
     }
   },
   {
-    "name": "Tag",
+    "name": "Tag List",
     "apiPath": "/api/git/tag",
     "method": "POST",
     "params": [
-      "repoName",
-      "tagName"
+      "repoName"
     ],
     "paramValues": {
-      "repoName": "nowinandroid",
-      "tagName": ""
+      "repoName": "nowinandroid"
     }
   },
   {
     "name": "Update All Projects",
     "apiPath": "/api/project/update",
-    "method": "GET",
-    "params": [],
-    "paramValues": {}
+    "method": "GET"
   }
 ]

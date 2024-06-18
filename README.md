@@ -12,7 +12,13 @@ REST APIs that providing analysis functions of Gradle-based projects
 
 ## Demo
 
+### Demo Page
+
 ![](docs/demo.png)
+
+### File Browser
+
+![](docs/file-browser.png)
 
 ## Usage
 

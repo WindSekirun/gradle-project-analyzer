@@ -4,12 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gradle-project-analyzer demo page</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Vuetify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.6.9/dist/vuetify.min.css" rel="stylesheet" />
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+    <!-- Vuetify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.6.9/dist/vuetify.min.js"></script>
+    <!-- Vuetify Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" />
+    <!-- Network -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- highlight.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="demo.css" />
+    <!-- prettier -->
     <script type="module">
       import * as prettier from 'https://unpkg.com/prettier@3.3.2/standalone.mjs';
       import prettierPluginBabel from 'https://unpkg.com/prettier@3.3.2/plugins/babel.mjs';
@@ -20,49 +29,13 @@
     </script>
   </head>
   <body>
-    <div id="app" class="container">
-      <div class="left">
-        <div class="row">
-          <div class="input-group">
-            <label>Authorization Header</label>
-            <input v-model="authorizationHeader" type="text" />
-          </div>
-        </div>
-        <div class="row">
-          <button @click="connectWebSocket" style="margin-right: 10px">Connect</button>
-          <button @click="disconnectWebSocket">Disconnect</button>
-          <span class="status-indicator">{{ connectionStatus }}</span>
-        </div>
-        <div class="function-group" v-for="(functionData, index) in functionsList" :key="index">
-          <div class="input-group">
-            <label>{{ functionData.name }}</label>
-          </div>
-          <div v-for="(param, pIndex) in functionData.params" :key="pIndex" class="input-group">
-            <label>{{ param }}</label>
-            <input v-model="functionData.paramValues[param]" type="text" />
-          </div>
-          <div v-for="(param, qIndex) in functionData.querys" :key="qIndex" class="input-group">
-            <label>{{ param }}</label>
-            <input v-model="functionData.queryValues[param]" type="text" />
-          </div>
-          <button @click="executeFunction(functionData)">Execute</button>
-        </div>
-        <div class="row">
-          <pre><code class="hljs" v-html="highlightedOutput"></code></pre>
-        </div>
-      </div>
-      <div class="right"></div>
-    </div>
+    <div id="app"></div>
 
-    <script type="module">
-      import {
-        createApp,
-        ref,
-        reactive,
-        computed,
-        onMounted,
-        watch,
-      } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+    <script>
+      const { createApp, ref, computed, onMounted, watch } = Vue;
+      const { createVuetify } = Vuetify;
+
+      const vuetify = createVuetify();
 
       const App = {
         setup() {
@@ -107,9 +80,11 @@
             });
 
             const urlParams = new URLSearchParams();
-            functionData.querys.forEach((param) => {
-              urlParams.append(param, functionData.queryValues[param]);
-            });
+            if (functionData.querys) {
+              functionData.querys.forEach((param) => {
+                urlParams.append(param, functionData.queryValues[param]);
+              });
+            }
             const url = `${functionData.apiPath}?${urlParams.toString()}`;
 
             try {
@@ -195,9 +170,55 @@
             updateOutput,
           };
         },
+        template: `
+        <v-app>
+          <v-main class="ps-2 pe-2">
+            <v-container fluid class="fill-height">
+              <v-row class="fill-height">
+                <v-col cols="7" class="left">
+                    <v-row class="d-flex align-center">
+                        <span class="text-h6">Authorization Header</span>
+                        <v-text-field v-model="authorizationHeader" color="primary" label="Value" variant="underlined" hide-details class="ms-5" max-width="300"></v-text-field>
+                    </v-row>
+                    <div class="mt-5"/>
+                    <v-row class="d-flex align-center">
+                        <span class="text-h6">Output WebSocket</span>
+                        <span class="ms-2">{{ connectionStatus }}</span>
+                        <v-btn @click="connectWebSocket" color="primary" class="text-none ms-5">Connect</v-btn>
+                        <v-btn @click="disconnectWebSocket" color="primary" variant="text" class="text-none ms-2">Disconnect</v-btn> 
+                    </v-row>
+                    <div class="mt-5"/>
+                    <div v-for="(functionData, index) in functionsList" :key="index">
+                        <span class="text-h6 ms-n3">{{ functionData.name }}</span>
+                        <span class="text-caption ms-1">{{ functionData.method }} {{ functionData.apiPath }}</span>
+                        <v-btn class="text-none ms-2" variant="tonal" color="green" @click="executeFunction(functionData)">Execute</v-btn>
+                        <v-row class="d-flex align-center" class="ms-n3 mt-2" v-if="functionData.paramValues">
+                            <span class="text-body-1">Param</span>
+                            <v-text-field v-model="functionData.paramValues[param]" :label="param" type="text" color="primary" variant="underlined" hide-details max-width="300" class="ms-2" v-for="(param, pIndex) in functionData.params" :key="pIndex" />
+                        </v-row>
+                        <v-row class="d-flex align-center" class="ms-n3 mt-4" v-if="functionData.queryValues">
+                            <span class="text-body-1">Query</span>
+                            <v-text-field v-model="functionData.queryValues[param]" :label="param" type="text" color="primary" variant="underlined" hide-details max-width="300" class="ms-2" v-for="(param, pIndex) in functionData.querys" :key="pIndex" />
+                        </v-row>
+                        <div class="mt-5"/>
+                        <div class="mt-5"/>
+                    </div>
+                </v-col>
+                <v-divider vertical></v-divider>
+                <v-col cols="5">
+                    <pre class="ms-3"><code class="hljs" v-html="highlightedOutput"></code></pre>
+                    <div class="right"></div>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-main>
+        </v-app>
+      `,
       };
 
-      createApp(App).mount('#app');
+      const app = createApp(App);
+      app.use(vuetify);
+      app.mount('#app');
     </script>
   </body>
 </html>

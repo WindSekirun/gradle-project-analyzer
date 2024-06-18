@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommandService } from '../command/command.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { getRepoPath } from '../utils/path';
@@ -26,8 +26,16 @@ export class GitService {
     await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} branch -D ${branchName}`);
   }
 
-  async tag(repoName: string, tagName: string) {
+  async newTag(repoName: string, tagName: string) {
+    if (!tagName) {
+      throw new BadRequestException('tagName is empty')
+    }
     await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} tag ${tagName}`);
+  }
+
+  async getTagList(repoName: string) {
+    const output = await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} tag -l`);
+    return output.split('\n').map((branch) => branch.trim());
   }
 
   async deleteTag(repoName: string, tagName: string) {

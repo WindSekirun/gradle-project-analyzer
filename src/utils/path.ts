@@ -1,5 +1,9 @@
 import { join } from 'path';
 
+export function getBasePath() {
+  return join(__dirname, '..', '..', 'data');
+}
+
 export function getRepoPath(repoName: string) {
   return join(__dirname, '..', '..', 'data/', 'repos', repoName);
 }

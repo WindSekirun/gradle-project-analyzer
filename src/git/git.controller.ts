@@ -196,9 +196,23 @@ export class GitController {
     },
   })
   @ApiTags('Git operations')
+  @Post('tag/new')
+  async newTag(@Body('repoName') repoName: string, @Body('tagName') tagName: string) {
+    return exec(async () => await this.gitService.newTag(repoName, tagName));
+  }
+
+  @ApiResponse({
+    schema: {
+      properties: {
+        result: { type: 'boolean', description: 'Result' },
+        response: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  })
+  @ApiTags('Git operations')
   @Post('tag')
-  async tag(@Body('repoName') repoName: string, @Body('tagName') tagName: string) {
-    return exec(async () => await this.gitService.tag(repoName, tagName));
+  async getTagList(@Body('repoName') repoName: string) {
+    return exec(async () => await this.gitService.getTagList(repoName));
   }
 
   @ApiBody({

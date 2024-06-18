@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import { LogsGateway } from '../socket/log.gateway';
+import { getBasePath } from '../utils/path';
 
 @Injectable()
 export class CommandService {
-  constructor(private readonly logsGateway: LogsGateway) {}
+  basePath = ''
+  constructor(private readonly logsGateway: LogsGateway) {
+    this.basePath = getBasePath();
+  }
 
   async runCommand(command: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -12,7 +16,7 @@ export class CommandService {
       let output = '';
       const start = Date.now()
 
-      this.logsGateway.sendLogMessage(`> ${command}`);
+      this.logsGateway.sendLogMessage(`> ${command.replace(this.basePath, '')}`);
 
       cmd.stdout.on('data', (data) => {
         const message = data.toString();
