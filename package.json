@@ -12,7 +12,7 @@
     "prisma:deploy": "npx prisma deploy",
     "prisma:migrate": "npx prisma migrate dev --name init",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "prepush": "node scripts/prepush.js",
+    "prepush": "node scripts/internal/prepush.js",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky || true"
   },
