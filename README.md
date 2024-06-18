@@ -4,8 +4,10 @@ REST APIs that providing analysis functions of Gradle-based projects
 
 ## Features
 
-- Clone/Checkout/Pull/Fetch/Log/Browse git projects
-- Find relative path from moduleName (ex, :feature:bookmarks), canonicalName (ex, com.google.samples.apps.nowinandroid.feature.bookmarks.BookmarksScreenTest)
+- Provide API for git projects for automation
+- Find relative path from moduleName, canonicalName
+  - moduleName: `:feature:bookmarks`
+  - canonicalName: `com.google.samples.apps.nowinandroid.feature.bookmarks.BookmarksScreenTest`
 - Generate Cloc Report per module
 
 ## Demo

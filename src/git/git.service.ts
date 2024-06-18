@@ -18,6 +18,14 @@ export class GitService {
     await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} branch -D ${branchName}`);
   }
 
+  async tag(repoName: string, tagName: string) {
+    await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} tag ${tagName}`);
+  }
+
+  async deleteTag(repoName: string, tagName: string) {
+    await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} tag -d ${tagName}`);
+  }
+
   async pull(repoName: string) {
     return await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} pull`);
   }

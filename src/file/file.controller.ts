@@ -4,10 +4,32 @@ import { Response } from 'express';
 import { join } from 'path';
 import { AuthGuard } from '../auth/auth.guard';
 import * as mime from 'mime-types';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('files')
 @UseGuards(AuthGuard)
 export class FileController {
+  @ApiQuery({
+    schema: {
+      properties: {
+        command: { type: 'path', description: 'Get sub-files of provided path' },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'file name' },
+          path: { type: 'string', description: 'file path' },
+          isDirectory: { type: 'boolean', description: 'True if file is directory' },
+        },
+      },
+    },
+  })
+  @ApiTags('Browse')
   @Get()
   getFiles(@Query('path') path: string = '') {
     const directoryPath = join(__dirname, '..', '..', 'data/', 'repos', path);
@@ -19,6 +41,20 @@ export class FileController {
     return files;
   }
 
+  @ApiQuery({
+    schema: {
+      properties: {
+        command: { type: 'path', description: 'Get file content of provided path' },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'string',
+      description: 'File content',
+    },
+  })
+  @ApiTags('Browse')
   @Get('content')
   getFileContent(@Query('path') path: string, @Res() res: Response) {
     try {

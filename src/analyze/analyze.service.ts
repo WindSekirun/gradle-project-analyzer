@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getRepoPath, getScriptsPath } from '../utils/path';
 import { join, relative } from 'path';
 import * as glob from 'glob';
-import { CommandService } from 'src/command/command.service';
+import { CommandService } from '../command/command.service';
 
 @Injectable()
 export class AnalyzeService {

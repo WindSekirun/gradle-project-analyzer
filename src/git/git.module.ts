@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GitService } from './git.service';
 import { GitController } from './git.controller';
-import { CommandModule } from 'src/command/command.module';
+import { CommandModule } from '../command/command.module';
 
 @Module({
   imports: [CommandModule],
