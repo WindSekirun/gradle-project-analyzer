@@ -2,7 +2,7 @@ const shell = require('shelljs');
 const fs = require('fs');
 const path = require('path');
 
-const PACKAGE_JSON_PATH = path.join(__dirname, '../package.json');
+const PACKAGE_JSON_PATH = path.join(__dirname, '../../package.json');
 
 function getCurrentVersion() {
   const packageJson = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf8'));
