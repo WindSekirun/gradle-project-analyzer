@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { GitModule } from './git/git.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AnalyzeModule } from './analyze/analyze.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', '..', 'data/', 'repos'),
       serveRoot: '/repos',
     }),
+    AnalyzeModule,
   ],
   controllers: [],
   providers: [],

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { GitService } from './git.service';
 import { exec } from '../utils/exec';
@@ -39,7 +39,17 @@ export class GitController {
   }
 
   @Post('checkout')
-  async checkout(@Body('repoName') repoName: string, @Body('newBranch') newBranch: string, @Body('ref') ref: string) {
+  async checkout(@Body('repoName') repoName: string, @Body('newBranch') newBranch: string, @Body('ref') ref?: string) {
     return exec(async () => await this.gitService.checkout(repoName, newBranch, ref));
+  }
+
+  @Post('log')
+  async log(
+    @Body('repoName') repoName: string,
+    @Body('relativePath') relativePath: string,
+    @Body('size', new DefaultValuePipe(10), new ParseIntPipe())
+    size?: number,
+  ) {
+    return exec(async () => await this.gitService.log(repoName, relativePath, size));
   }
 }

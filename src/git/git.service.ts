@@ -21,19 +21,22 @@ export class GitService {
   }
 
   async pull(repoName: string) {
-    return await this.commandService.runCommand('delete', `git -C ${getRepoPath(repoName)} pull`);
+    return await this.commandService.runCommand('pull', `git -C ${getRepoPath(repoName)} pull`);
   }
 
   async fetch(repoName: string) {
-    return await this.commandService.runCommand('delete', `git -C ${getRepoPath(repoName)} fetch`);
+    return await this.commandService.runCommand('fetch', `git -C ${getRepoPath(repoName)} fetch`);
   }
 
   async status(repoName: string) {
-    return await this.commandService.runCommand('delete', `git -C ${getRepoPath(repoName)} status`);
+    return await this.commandService.runCommand('status', `git -C ${getRepoPath(repoName)} status`);
   }
 
-  async checkout(repoName: string, newBranch: string, ref: string) {
-    return await this.commandService.runCommand('delete', `git -C ${getRepoPath(repoName)} checkout -b ${newBranch} ${ref}`);
+  async checkout(repoName: string, newBranch: string, ref?: string) {
+    const command = ref
+      ? `git -C ${getRepoPath(repoName)} checkout -b ${newBranch} ${ref}`
+      : `git -C ${getRepoPath(repoName)} checkout ${newBranch}`;
+    return await this.commandService.runCommand('checkout', command);
   }
 
   async clone(repoName: string, repoUrl: string): Promise<string> {
@@ -61,8 +64,22 @@ export class GitService {
 
   async getCurrentBranch(repoName: string) {
     return await this.commandService.runCommand(
-      'delete',
+      'current-branch',
       `git -C ${getRepoPath(repoName)} rev-parse --abbrev-ref HEAD`,
     );
+  }
+
+  async log(repoName: string, relativePath: string, size: number): Promise<any[]> {
+    const command = `git -C ${getRepoPath(repoName)} log -n ${size} --pretty=format:'%H|%an|%ae|%s' -- ${relativePath}`;
+
+    try {
+      const stdout = await this.commandService.runCommand('logs', command);
+      return stdout.split('\n').map((log) => {
+        const [hash, authorName, authorEmail, message] = log.split('|');
+        return { hash, authorName, authorEmail, message };
+      })
+    } catch (error) {
+      throw new Error(`Error executing git command: ${error.message}`);
+    }
   }
 }

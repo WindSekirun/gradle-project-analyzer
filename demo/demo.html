@@ -6,10 +6,18 @@
     <title>gradle-project-analyzer demo page</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <link rel="stylesheet" href="demo.css" />
+    <script type="module">
+      import * as prettier from 'https://unpkg.com/prettier@3.3.2/standalone.mjs';
+      import prettierPluginBabel from 'https://unpkg.com/prettier@3.3.2/plugins/babel.mjs';
+      import prettierPluginEstree from 'https://unpkg.com/prettier@3.3.2/plugins/estree.mjs';
+
+      window.prettier = prettier;
+      window.prettierPlugins = [prettierPluginBabel, prettierPluginEstree];
+    </script>
   </head>
   <body>
     <div id="app" class="container">
@@ -36,7 +44,7 @@
           <button @click="executeFunction(functionData)">Execute</button>
         </div>
         <div class="row">
-          <pre><code ref="output" class="hljs">{{ output.value }}</code></pre>
+          <pre><code class="hljs" v-html="highlightedOutput"></code></pre>
         </div>
       </div>
       <div class="right"></div>
@@ -125,7 +133,7 @@
               paramValues: {
                 repoName: defaultRepoName,
                 newBranch: '',
-                ref: ''
+                ref: '',
               },
             },
             {
@@ -153,6 +161,29 @@
               params: ['repoName'],
               paramValues: {
                 repoName: defaultRepoName,
+              },
+            },
+            {
+              name: 'Find File',
+              apiPath: '/api/analyze/find/file',
+              method: 'POST',
+              params: ['repoName', 'moduleName', 'canonicalName'],
+              paramValues: {
+                repoName: defaultRepoName,
+                moduleName: ':feature:bookmarks',
+                canonicalName: 'com.google.samples.apps.nowinandroid.feature.bookmarks.BookmarksScreenTest',
+              },
+            },
+            {
+              name: 'Log',
+              apiPath: '/api/git/log',
+              method: 'POST',
+              params: ['repoName', 'relativePath', 'size'],
+              paramValues: {
+                repoName: defaultRepoName,
+                relativePath:
+                  'feature/bookmarks/src/androidTest/kotlin/com/google/samples/apps/nowinandroid/feature/bookmarks/BookmarksScreenTest.kt',
+                size: '10',
               },
             },
           ]);
@@ -209,11 +240,22 @@
             updateOutput();
           };
 
-          const updateOutput = () => {
+          const updateOutput = async () => {
             const outputElement = document.querySelector('code.hljs');
-            outputElement.innerText = output.value;
-            hljs.highlightElement(outputElement);
+            const formatted = await window.prettier.format(output.value, {
+              parser: 'json',
+              plugins: window.prettierPlugins,
+            });
+            output.value = formatted;
           };
+
+          const highlightedOutput = computed(() => {
+            if (output.value != '') {
+              const highlighted = hljs.highlightAuto(output.value).value;
+              return highlighted;
+            }
+            return '';
+          });
 
           onMounted(() => {
             socket.on('connect', () => {
@@ -249,6 +291,7 @@
           return {
             authorizationHeader,
             output,
+            highlightedOutput,
             socketConnected,
             functionsList,
             connectionStatus,
