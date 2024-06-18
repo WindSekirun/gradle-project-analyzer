@@ -30,7 +30,7 @@ export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     Logger.log(`Client disconnected: ${client.id}`, 'LogGateway');
   }
 
-  sendLogMessage(id: string, message: string) {
-    this.server.emit('log', { id, message });
+  sendLogMessage(message: string) {
+    this.server.emit('log', { message });
   }
 }

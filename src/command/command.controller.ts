@@ -10,7 +10,7 @@ export class CommandController {
   @Post('execute')
   async runCommand(@Body('id') id: string, @Body('command') command: string) {
     try {
-      const response = await this.commandService.runCommand(id, command);
+      const response = await this.commandService.runCommand(command);
       return { result: true, response };
     } catch (error) {
       return { result: false, error };

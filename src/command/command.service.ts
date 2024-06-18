@@ -6,28 +6,28 @@ import { LogsGateway } from '../socket/log.gateway';
 export class CommandService {
   constructor(private readonly logsGateway: LogsGateway) {}
 
-  async runCommand(logId: string, command: string): Promise<string> {
+  async runCommand(command: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const cmd = exec(command);
       let output = '';
       const start = Date.now()
 
-      this.logsGateway.sendLogMessage(logId, `> ${command}`);
+      this.logsGateway.sendLogMessage(`> ${command}`);
 
       cmd.stdout.on('data', (data) => {
         const message = data.toString();
         output += message;
-        this.logsGateway.sendLogMessage(logId, message);
+        this.logsGateway.sendLogMessage(message);
       });
 
       cmd.stderr.on('data', (data) => {
         const message = data.toString();
         output += message;
-        this.logsGateway.sendLogMessage(logId, message);
+        this.logsGateway.sendLogMessage(message);
       });
 
       cmd.on('close', (code) => {
-        this.logsGateway.sendLogMessage(logId, `Done in ${Date.now() - start}ms`);
+        this.logsGateway.sendLogMessage(`Done in ${Date.now() - start}ms`);
         if (code === 0) {
           resolve(output.slice(0, output.length - 1));
         } else {

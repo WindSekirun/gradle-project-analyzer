@@ -159,17 +159,10 @@
 
             socket.on('log', (data) => {
               const { id, message } = data;
-              let logElement = document.getElementById(id);
-
-              if (logElement) {
-                logElement.innerText += '\n' + message;
-              } else {
-                logElement = document.createElement('div');
-                logElement.id = id;
-                logElement.innerText = message;
-                logElement.className = 'log-message';
-                document.querySelector('.right').appendChild(logElement);
-              }
+              logElement = document.createElement('div');
+              logElement.innerText = message;
+              logElement.className = 'log-message';
+              document.querySelector('.right').appendChild(logElement);
 
               logElement.scrollIntoView({ behavior: 'smooth' });
             });

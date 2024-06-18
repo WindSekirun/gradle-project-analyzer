@@ -10,7 +10,7 @@ export class AnalyzeService {
 
   async generateModuleReport(repoName: string) {
     const command = `python3 ${getScriptsPath('cloc.py')} ${getRepoPath(repoName)} JAVA,KOTLIN,XML test,androidTest`;
-    return await this.commandService.runCommand(`module-report-${repoName}`, command);
+    return await this.commandService.runCommand(command);
   }
 
   findFileInModule(repoName: string, moduleName: string, canonicalName: string): string[] {

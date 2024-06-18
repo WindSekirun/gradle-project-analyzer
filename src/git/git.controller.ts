@@ -33,6 +33,11 @@ export class GitController {
     return exec(async () => await this.gitService.getCurrentBranch(repoName));
   }
 
+  @Post('branch/delete')
+  async deleteBranch(@Body('repoName') repoName: string, @Body("branchName") branchName: string) {
+    return exec(async () => await this.gitService.deleteBranch(repoName, branchName));
+  }
+
   @Post('checkout')
   async checkout(@Body('repoName') repoName: string, @Body('newBranch') newBranch: string, @Body('ref') ref?: string) {
     return exec(async () => await this.gitService.checkout(repoName, newBranch, ref));
