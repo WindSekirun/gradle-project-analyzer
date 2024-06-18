@@ -1,6 +1,6 @@
 {
   "name": "gradle-project-analyzer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "REST APIs that providing analysis functions of Gradle-based projects",
   "author": "WindSekirun",
   "private": true,
