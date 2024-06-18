@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/${{ env.REPO_NAME_LOWER }}:${{ github.ref_name }}
+          images: ghcr.io/${{ env.REPO_NAME_LOWER }}
           labels: |
             org.opencontainers.image.authors=${{ env.AUTHOR }}
           tags: |
