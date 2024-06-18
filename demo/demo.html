@@ -62,10 +62,9 @@
 
       const App = {
         setup() {
-          const defaultRepoName = 'nowinandroid';
-          const defaultRepoUrl = 'https://github.com/android/nowinandroid';
           const authorizationHeader = ref('sample');
           const output = ref('');
+          const functionsList = ref([]);
           const socketConnected = ref(false);
           const instance = axios.create({
             baseURL: 'http://localhost:3000',
@@ -78,116 +77,6 @@
             reconnectionDelayMax: 10000,
             reconnection: false,
           });
-
-          const functionsList = reactive([
-            {
-              name: 'Project List',
-              apiPath: '/api/project',
-              method: 'GET',
-              params: [],
-              paramValues: {},
-            },
-            {
-              name: 'Command',
-              apiPath: '/api/command/execute',
-              method: 'POST',
-              params: ['id', 'command'],
-              paramValues: {
-                id: '',
-                command: '',
-              },
-            },
-            {
-              name: 'Clone',
-              apiPath: '/api/git/clone',
-              method: 'POST',
-              params: ['repoName', 'repoUrl'],
-              paramValues: {
-                repoName: defaultRepoName,
-                repoUrl: defaultRepoUrl,
-              },
-            },
-            {
-              name: 'Pull',
-              apiPath: '/api/git/pull',
-              method: 'POST',
-              params: ['repoName'],
-              paramValues: {
-                repoName: defaultRepoName,
-              },
-            },
-            {
-              name: 'Fetch',
-              apiPath: '/api/git/fetch',
-              method: 'POST',
-              params: ['repoName'],
-              paramValues: {
-                repoName: defaultRepoName,
-              },
-            },
-            {
-              name: 'Checkout',
-              apiPath: '/api/git/checkout',
-              method: 'POST',
-              params: ['repoName', 'newBranch', 'ref'],
-              paramValues: {
-                repoName: defaultRepoName,
-                newBranch: '',
-                ref: '',
-              },
-            },
-            {
-              name: 'Delete',
-              apiPath: '/api/git/delete',
-              method: 'POST',
-              params: ['repoName'],
-              paramValues: {
-                repoName: defaultRepoName,
-              },
-            },
-            {
-              name: 'Status',
-              apiPath: '/api/git/status',
-              method: 'POST',
-              params: ['repoName'],
-              paramValues: {
-                repoName: defaultRepoName,
-              },
-            },
-            {
-              name: 'Current Branch',
-              apiPath: '/api/git/branch/get',
-              method: 'POST',
-              params: ['repoName'],
-              paramValues: {
-                repoName: defaultRepoName,
-              },
-            },
-            {
-              name: 'Find File',
-              apiPath: '/api/analyze/find/file',
-              method: 'POST',
-              params: ['repoName', 'moduleName', 'canonicalName'],
-              paramValues: {
-                repoName: defaultRepoName,
-                moduleName: ':feature:bookmarks',
-                canonicalName: 'com.google.samples.apps.nowinandroid.feature.bookmarks.BookmarksScreenTest',
-              },
-            },
-            {
-              name: 'Log',
-              apiPath: '/api/git/log',
-              method: 'POST',
-              params: ['repoName', 'relativePath', 'size'],
-              paramValues: {
-                repoName: defaultRepoName,
-                relativePath:
-                  'feature/bookmarks/src/androidTest/kotlin/com/google/samples/apps/nowinandroid/feature/bookmarks/BookmarksScreenTest.kt',
-                size: '10',
-              },
-            },
-          ]);
-
           const connectionStatus = computed(() => (socketConnected.value ? '🟢' : '🔴'));
 
           const connectWebSocket = () => {
@@ -257,7 +146,9 @@
             return '';
           });
 
-          onMounted(() => {
+          onMounted(async () => {
+            const response = await axios.get('demo-functions.json');
+            functionsList.value = response.data;
             socket.on('connect', () => {
               socketConnected.value = true;
             });

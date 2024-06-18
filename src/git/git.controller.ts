@@ -13,11 +13,6 @@ export class GitController {
     return exec(async () => await this.gitService.clone(repoName, repoUrl));
   }
 
-  @Post('delete')
-  async delete(@Body('repoName') repoName: string) {
-    return exec(async () => await this.gitService.delete(repoName));
-  }
-
   @Post('pull')
   async pull(@Body('repoName') repoName: string) {
     return exec(async () => await this.gitService.pull(repoName));

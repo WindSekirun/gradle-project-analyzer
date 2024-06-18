@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { getRepoPath } from '../utils/path';
+import { getRepoPath, getScriptsPath } from '../utils/path';
 import { join, relative } from 'path';
 import * as glob from 'glob';
+import { CommandService } from 'src/command/command.service';
 
 @Injectable()
 export class AnalyzeService {
+  constructor(private commandService: CommandService) {}
+
+  async generateModuleReport(repoName: string) {
+    const command = `python3 ${getScriptsPath('cloc.py')} ${getRepoPath(repoName)} JAVA,KOTLIN,XML test,androidTest`;
+    return await this.commandService.runCommand(`module-report-${repoName}`, command);
+  }
 
   findFileInModule(repoName: string, moduleName: string, canonicalName: string): string[] {
     const repoDir = getRepoPath(repoName);

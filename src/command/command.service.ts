@@ -10,6 +10,7 @@ export class CommandService {
     return new Promise((resolve, reject) => {
       const cmd = exec(command);
       let output = '';
+      const start = Date.now()
 
       this.logsGateway.sendLogMessage(logId, `> ${command}`);
 
@@ -26,6 +27,7 @@ export class CommandService {
       });
 
       cmd.on('close', (code) => {
+        this.logsGateway.sendLogMessage(logId, `Done in ${Date.now() - start}ms`);
         if (code === 0) {
           resolve(output.slice(0, output.length - 1));
         } else {

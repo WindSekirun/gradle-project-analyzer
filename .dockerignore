@@ -1,3 +1,4 @@
 prisma/*.db
 prisma/*.db-journal
 data/
+scripts/internal/*

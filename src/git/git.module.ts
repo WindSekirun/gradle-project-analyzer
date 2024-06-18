@@ -7,5 +7,6 @@ import { CommandModule } from 'src/command/command.module';
   imports: [CommandModule],
   providers: [GitService],
   controllers: [GitController],
+  exports: [GitService],
 })
 export class GitModule {}

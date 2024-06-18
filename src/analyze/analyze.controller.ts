@@ -15,4 +15,9 @@ export class AnalyzeController {
   ) {
     return this.analyzeService.findFileInModule(repoName, moduleName, canonicalName);
   }
+
+  @Post('report/module')
+  async generateModuleReport(@Body('repoName') repoName: string) {
+    return this.analyzeService.generateModuleReport(repoName);
+  }
 }
