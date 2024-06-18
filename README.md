@@ -1,7 +1,5 @@
 # docker-gradle-project-analyze
 
-**Currently developing**
-
 REST APIs that providing analysis functions of Gradle-based projects
 
 ## Features
