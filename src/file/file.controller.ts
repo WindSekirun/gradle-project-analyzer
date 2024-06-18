@@ -4,10 +4,11 @@ import { Response } from 'express';
 import { join } from 'path';
 import { AuthGuard } from '../auth/auth.guard';
 import * as mime from 'mime-types';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('files')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class FileController {
   @ApiQuery({
     schema: {

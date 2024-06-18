@@ -41,6 +41,10 @@
             <label>{{ param }}</label>
             <input v-model="functionData.paramValues[param]" type="text" />
           </div>
+          <div v-for="(param, qIndex) in functionData.querys" :key="qIndex" class="input-group">
+            <label>{{ param }}</label>
+            <input v-model="functionData.queryValues[param]" type="text" />
+          </div>
           <button @click="executeFunction(functionData)">Execute</button>
         </div>
         <div class="row">
@@ -102,16 +106,22 @@
               }
             });
 
+            const urlParams = new URLSearchParams();
+            functionData.querys.forEach((param) => {
+              urlParams.append(param, functionData.queryValues[param]);
+            });
+            const url = `${functionData.apiPath}?${urlParams.toString()}`;
+
             try {
               let response;
               if (functionData.method === 'GET') {
-                response = await instance.get(functionData.apiPath, {
+                response = await instance.get(url, {
                   headers: {
                     Authorization: `Bearer ${authorizationHeader.value}`,
                   },
                 });
               } else {
-                response = await instance.post(functionData.apiPath, requestData, {
+                response = await instance.post(url, requestData, {
                   headers: {
                     Authorization: `Bearer ${authorizationHeader.value}`,
                   },

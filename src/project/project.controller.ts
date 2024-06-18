@@ -2,10 +2,11 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { exec } from '../utils/exec';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('project')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
@@ -37,14 +38,6 @@ export class ProjectController {
     return await this.projectService.updateAllProjects();
   }
 
-  @ApiBody({
-    schema: {
-      properties: {
-        repoName: { type: 'string', description: 'Project Name' },
-      },
-      required: ['repoName'],
-    },
-  })
   @ApiResponse({
     schema: {
       properties: {

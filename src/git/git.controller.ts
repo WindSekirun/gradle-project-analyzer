@@ -1,11 +1,21 @@
-import { Body, Controller, DefaultValuePipe, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { GitService } from './git.service';
 import { exec } from '../utils/exec';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('git')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class GitController {
   constructor(private gitService: GitService) {}
 
@@ -115,9 +125,34 @@ export class GitController {
     },
   })
   @ApiTags('Git operations')
-  @Post('branch/get')
+  @Post('branch/current')
   async getCurrentBranch(@Body('repoName') repoName: string) {
     return exec(async () => await this.gitService.getCurrentBranch(repoName));
+  }
+
+  @ApiBody({
+    schema: {
+      properties: {
+        repoName: { type: 'string', description: 'Project Name' },
+      },
+      required: ['repoName'],
+    },
+  })
+  @ApiResponse({
+    schema: {
+      properties: {
+        result: { type: 'boolean', description: 'Result' },
+        response: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  })
+  @ApiTags('Git operations')
+  @Post('branch')
+  async getBranchList(
+    @Body('repoName') repoName: string,
+    @Query('remote', new DefaultValuePipe(false), new ParseBoolPipe()) includeRemote: boolean,
+  ) {
+    return exec(async () => await this.gitService.getBranchList(repoName, includeRemote));
   }
 
   @ApiBody({

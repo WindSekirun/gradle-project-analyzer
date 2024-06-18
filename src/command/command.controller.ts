@@ -1,10 +1,11 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { CommandService } from './command.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('command')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class CommandController {
   constructor(private commandService: CommandService) {}
 

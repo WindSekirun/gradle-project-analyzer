@@ -14,6 +14,14 @@ export class GitService {
     await this.commandService.runCommand(`rm -rf ${getRepoPath(repoName)}`);
   }
 
+  async getBranchList(repoName: string, includeRemote: boolean) {
+    const command = includeRemote
+      ? `git -C ${getRepoPath(repoName)} branch -a`
+      : `git -C ${getRepoPath(repoName)} branch`;
+    const output = await this.commandService.runCommand(command);
+    return output.split('\n').map((branch) => branch.replace("*", "").trim());
+  }
+
   async deleteBranch(repoName: string, branchName: string) {
     await this.commandService.runCommand(`git -C ${getRepoPath(repoName)} branch -D ${branchName}`);
   }

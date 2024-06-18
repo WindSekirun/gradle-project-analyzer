@@ -1,10 +1,11 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AnalyzeService } from './analyze.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('analyze')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class AnalyzeController {
   constructor(private analyzeService: AnalyzeService) {}
 
