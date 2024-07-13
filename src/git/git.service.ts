@@ -94,13 +94,13 @@ export class GitService {
   }
 
   async log(repoName: string, relativePath: string, size: number): Promise<any[]> {
-    const command = `git -C ${getRepoPath(repoName)} log -n ${size} --pretty=format:'%H|%an|%ae|%s' -- ${relativePath}`;
+    const command = `git -C ${getRepoPath(repoName)} log -n ${size} --pretty=format:'%H|%an|%ae|%s|%ct' -- ${relativePath}`;
 
     try {
       const stdout = await this.commandService.runCommand(command);
       return stdout.split('\n').map((log) => {
-        const [hash, authorName, authorEmail, message] = log.split('|');
-        return { hash, authorName, authorEmail, message };
+        const [hash, authorName, authorEmail, message, date] = log.split('|');
+        return { hash, authorName, authorEmail, message, date };
       });
     } catch (error) {
       throw new Error(`Error executing git command: ${error.message}`);

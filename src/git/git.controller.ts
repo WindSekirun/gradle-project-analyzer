@@ -286,6 +286,7 @@ export class GitController {
             authorName: { type: 'string', description: 'The name of the author' },
             authorEmail: { type: 'string', description: 'The email of the author' },
             message: { type: 'string', description: 'The commit message' },
+            date: { type: 'string', description: 'The timestamp of commit' },
           },
         },
       },
