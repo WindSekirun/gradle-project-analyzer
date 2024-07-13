@@ -72,7 +72,7 @@
 
           const executeFunction = async (functionData) => {
             const requestData = {};
-            functionData.params.forEach((param) => {
+            functionData.params?.forEach((param) => {
               requestData[param] = functionData.paramValues[param];
               if (param == 'id' && !requestData['id']) {
                 requestData['id'] = uuid();

@@ -211,6 +211,6 @@
   {
     "name": "Update All Projects",
     "apiPath": "/api/project/update",
-    "method": "GET"
+    "method": "POST"
   }
 ]
